@@ -288,6 +288,7 @@ public class FunctionAppDraft extends FunctionApp implements AzResource.Draft<Fu
                     .withBuiltInRole(BuiltInRole.STORAGE_BLOB_DATA_CONTRIBUTOR)
                     .withScope(scope).create();
                 final RoleAssignment existingRoleAssignment = getExistingRoleAssignment(identityId, scope);
+                AzureMessager.getMessager().error("**********\n" + SerializerFactory.createDefaultManagementSerializerAdapter().serializeRaw(existingRoleAssignment) + "**********\n");
                 if (Objects.isNull(existingRoleAssignment)) {
                     AzureMessager.getMessager().error(String.format(ROLE_NOT_AFFECT, BuiltInRole.STORAGE_BLOB_DATA_CONTRIBUTOR, identityId));
                 }
