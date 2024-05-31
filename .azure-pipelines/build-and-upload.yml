@@ -45,6 +45,13 @@ extends:
                 inputs:
                   targetType: inline
                   script: |
+                    # Validate storage path
+                    AzTargetPath=$(TARGET_PATH)
+                    if [[ ! "$AzTargetPath" =~ "/java/" ]]; then
+                        echo "Invalid path, please follow pattern {product}/java/{version}"
+                        exit -1
+                    fi
+
                     # Install Maven
                     mvn install -DskipTests -Dcheckstyle.skip=true -Drelease -Dmaven.repo.local=./.repository
 
@@ -138,13 +145,7 @@ extends:
                   azurePowerShellVersion: LatestVersion
                   pwsh: true
                   Inline: |
-                    # Validate storage path
-                    AzTargetPath=$(TARGET_PATH)
-                    if [[ ! "$AzTargetPath" =~ "/java/" ]]; then
-                        echo "Invalid path, please follow pattern {product}/java/{version}"
-                        exit -1
-                    fi
-                    TARGET_URL="https://azuresdkpartnerdrops.blob.core.windows.net/drops/$AzTargetPath/"
+                    $TARGET_URL="https://azuresdkpartnerdrops.blob.core.windows.net/drops/$(TARGET_PATH)/"
                     azcopy remove "$TARGET_URL"
                     azcopy copy ".release/*" "$TARGET_URL"
                     echo "Resources uploaded."
